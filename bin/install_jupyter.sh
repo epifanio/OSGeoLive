@@ -60,8 +60,13 @@ cp "$BUILD_DIR"/../app-data/jupyter/jupyter_*.sh \
 chmod a+x /usr/local/bin/jupyter_*.sh
 
 mkdir -p "$USER_HOME/jupyter"
-git clone https://github.com/OSGeo/OSGeoLive-Notebooks.git \
-   "$USER_HOME/jupyter/notebooks"
+#git clone https://github.com/OSGeo/OSGeoLive-Notebooks.git \
+#   "$USER_HOME/jupyter/notebooks"
+
+
+git clone -b jupyter-debug --single-branch https://github.com/epifanio/OSGeoLive-Notebooks.git \
+    "$USER_HOME/jupyter/notebooks"
+    
 chown -R "$USER_NAME:$USER_NAME" "$USER_HOME/jupyter"
 
 cd /tmp
