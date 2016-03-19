@@ -64,9 +64,9 @@ mkdir -p "$USER_HOME/jupyter"
 #   "$USER_HOME/jupyter/notebooks"
 
 
-git clone -b jupyter-debug --single-branch https://github.com/epifanio/OSGeoLive-Notebooks.git \
+git clone -b notebook-debug --single-branch https://github.com/epifanio/OSGeoLive-Notebooks.git \
     "$USER_HOME/jupyter/notebooks"
-    
+
 chown -R "$USER_NAME:$USER_NAME" "$USER_HOME/jupyter"
 
 cd /tmp
