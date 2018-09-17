@@ -8,7 +8,7 @@
 #	         Angelos Tzotsos <tzotsos@gmail.com>
 #
 #############################################################################
-# Copyright (c) 2010-2016 Open Source Geospatial Foundation (OSGeo)
+# Copyright (c) 2010-2018 Open Source Geospatial Foundation (OSGeo) and others.
 # Copyright (c) 2009 LISAsoft
 #
 # Licensed under the GNU LGPL version >= 2.1.
@@ -122,8 +122,8 @@ export USER_NAME
 ### Base installers
 ./base_c.sh
 ./base_python.sh
-./base_java.sh "$ARCH"
-./base_language.sh
+./base_java.sh
+# ./base_language.sh
 
 ### Service installers
 ./service_apache2.sh
@@ -143,7 +143,6 @@ export USER_NAME
 ./install_mapserver.sh
 ./install_tinyows.sh
 ./install_gmt.sh
-./install_mb-system.sh
 ./install_mapnik.sh
 ./install_otb.sh
 ./install_liblas.sh
@@ -155,9 +154,9 @@ export USER_NAME
 ./install_marble.sh
 ./install_opencpn.sh
 ./install_zygrib.sh
+./install_PDAL.sh
 
 ## Python stack
-./install_jupyter.sh
 ./install_mapproxy.sh
 ./install_pycsw.sh
 ./install_pywps.sh
@@ -165,6 +164,12 @@ export USER_NAME
 ./install_iris.sh
 ./install_istsos.sh
 ./install_mapslicer.sh
+
+## R stack
+./install_R.sh
+
+## Jupyter
+./install_jupyter.sh
 
 ## Java stack
 ./install_geoserver.sh
@@ -182,17 +187,19 @@ export USER_NAME
 ./install_ncWMS.sh
 
 ## PHP stack
-./install_mapbender3.sh
+./install_mapbender.sh
 ./install_geomoose.sh
 
 ## more Python (GeoServer rdeps)
 ./install_geonode.sh
 
+## Rust
+./install_trex.sh
+
 ## Javascript et al
 ./install_openlayers.sh
 ./install_leaflet.sh
 ./install_cesium.sh
-./install_R.sh
 ./install_rasdaman.sh
 
 ## Docs, Data and extras
@@ -243,7 +250,7 @@ deluser --remove-home user
 
 # Copy casper.conf with default username and hostname
 # FIXME: User is still "xubuntu" in live session... perhaps because user is already created?
-cp /usr/local/share/gisvm/app-conf/build_chroot/casper.conf /etc/casper.conf
+cp /usr/local/share/gisvm/desktop-conf/casper/casper.conf /etc/casper.conf
 
 # After the build
 # Check for users above 999
@@ -262,7 +269,7 @@ rm /etc/hosts
 
 # Nameserver settings
 rm /etc/resolv.conf
-ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
+ln -s /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
 # If you installed software, be sure to run 
 rm /var/lib/dbus/machine-id

@@ -6,7 +6,7 @@
 # The menu creation and icon sorting has moved to install_icons_and_menus.sh
 #
 #############################################################################
-# Copyright (c) 2009-2016 Open Source Geospatial Foundation (OSGeo)
+# Copyright (c) 2009-2018 Open Source Geospatial Foundation (OSGeo) and others.
 #
 # Licensed under the GNU LGPL.
 #
@@ -44,8 +44,8 @@ chown "$USER_NAME"."$USER_NAME" "$USER_HOME/Desktop/passwords.txt"
 cp ../desktop-conf/osgeo-desktop.png \
     /usr/share/lubuntu/wallpapers/
 
-# cp ../desktop-conf/osgeo-desktop-transparent.png \
-#    /usr/share/lubuntu/wallpapers/
+cp ../desktop-conf/osgeo-desktop-transparent.png \
+   /usr/share/lubuntu/wallpapers/
 
 ### set the desktop background, turn on keyboard layout select control
 sed -i -e 's|^bg=.*|bg=/usr/share/lubuntu/wallpapers/osgeo-desktop.png|' \
