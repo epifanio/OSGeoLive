@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2013-2018 The Open Source Geospatial Foundation and others.
+# Copyright (c) 2013-2021 The Open Source Geospatial Foundation and others.
 # Licensed under the GNU LGPL version >= 2.1.
 #
 # This library is free software; you can redistribute it and/or modify it
@@ -32,14 +32,15 @@ USER_HOME="/home/$USER_NAME"
 
 TMP="/tmp/build_ncWMS"
 
-TOMCAT_USER_NAME="tomcat8"
-TOMCAT_USER_HOME="/usr/share/${TOMCAT_USER_NAME}"
-WMS_WAR_INSTALL_DIR="/var/lib/${TOMCAT_USER_NAME}/webapps"
+TOMCAT_NAME="tomcat9"
+TOMCAT_USER_NAME="tomcat"
+TOMCAT_USER_HOME="/usr/share/${TOMCAT_NAME}"
+WMS_WAR_INSTALL_DIR="/var/lib/${TOMCAT_NAME}/webapps"
 WMS_BIN_DIR="/usr/local/share/ncWMS"
-WMS_WAR_URL="https://github.com/Reading-eScience-Centre/ncwms/releases/download/ncwms-2.2.8/"
+WMS_WAR_URL="https://github.com/Reading-eScience-Centre/ncwms/releases/download/ncwms-2.4.2/"
 WMS_WAR_NAME="ncWMS2.war"
 WMS_WEB_APP_NAME="ncWMS2"
-WMS_TOMCAT_SCRIPT_NAME="$TOMCAT_USER_NAME"
+WMS_TOMCAT_SCRIPT_NAME="$TOMCAT_NAME"
 WMS_ICON_NAME="ncWMS_icon.png"
 WMS_URL="http://localhost:8080/$WMS_WEB_APP_NAME"
 WMS_QUICKSTART_URL="http://localhost/osgeolive/en/quickstart/ncWMS_quickstart.html"
@@ -145,9 +146,9 @@ chgrp users "$WMS_BIN_DIR"
 if [ ! -e "$WMS_BIN_DIR/ncWMS-start.sh" ] ; then
     cat << EOF > "$WMS_BIN_DIR/ncWMS-start.sh"
     #!/bin/bash
-    STAT=\`sudo service "$WMS_TOMCAT_SCRIPT_NAME" status | grep pid\`
+    STAT=\`sudo service $WMS_TOMCAT_SCRIPT_NAME status | grep PID\`
     if [ -z "\$STAT" ] ; then
-        sudo service "$WMS_TOMCAT_SCRIPT_NAME" start
+        sudo service $WMS_TOMCAT_SCRIPT_NAME start
         (sleep 5; echo "25"; sleep 5; echo "50"; sleep 5; echo "75"; sleep 5; echo "100") \
 	   | zenity --progress --auto-close --text "ncWMS starting"
     fi
@@ -159,9 +160,9 @@ fi
 if [ ! -e "$WMS_BIN_DIR/ncWMS-stop.sh" ] ; then
     cat << EOF > "$WMS_BIN_DIR/ncWMS-stop.sh"
     #!/bin/bash
-    STAT=\`sudo service "$WMS_TOMCAT_SCRIPT_NAME" status | grep pid\`
+    STAT=\`sudo service $WMS_TOMCAT_SCRIPT_NAME status | grep PID\`
     if [ -n "\$STAT" ] ; then
-        sudo service "$WMS_TOMCAT_SCRIPT_NAME" stop
+        sudo service $WMS_TOMCAT_SCRIPT_NAME stop
         zenity --info --text "ncWMS stopped"
     fi
 EOF

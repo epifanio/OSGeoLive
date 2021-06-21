@@ -5,7 +5,7 @@
 # Author: e.h.juerrens@52north.org, b.pross@52north.org (modified for WPS)
 #
 #############################################################################
-# Copyright (c) 2011-2018 The Open Source Geospatial Foundation and others.
+# Copyright (c) 2011-2020 The Open Source Geospatial Foundation and others.
 # Licensed under the GNU LGPL.
 #
 # This library is free software; you can redistribute it and/or modify it
@@ -36,15 +36,15 @@ if [ -z "$USER_NAME" ] ; then
    USER_NAME="user"
 fi
 USER_HOME="/home/$USER_NAME"
-TOMCAT_USER_NAME="tomcat8"
-WPS_WAR_INSTALL_FOLDER="/var/lib/${TOMCAT_USER_NAME}/webapps"
+WPS_TOMCAT_SCRIPT_NAME="tomcat9"
+TOMCAT_USER_NAME="tomcat"
+WPS_WAR_INSTALL_FOLDER="/var/lib/${WPS_TOMCAT_SCRIPT_NAME}/webapps"
 WPS_BIN_FOLDER="/usr/local/share/52nWPS"
-WPS_TAR_NAME="52nWPS-3.6.2.tar.gz"
-WPS_TAR_URL="http://52north.org/files/geoprocessing/OSGeoLiveDVD/"
+WPS_TAR_NAME="52nWPS-3.6.3.tar.gz"
+WPS_TAR_URL="https://52north.org/delivery/geoprocessing/osgeolive/"
 # when changing this, adjust the name in line 215, too,
 # and the quickstart, which links to this, too
 WPS_WEB_APP_NAME="52nWPS"
-WPS_TOMCAT_SCRIPT_NAME="$TOMCAT_USER_NAME"
 WPS_ICON_NAME="52n.png"
 WPS_URL="http://localhost:8080/$WPS_WEB_APP_NAME"
 WPS_QUICKSTART_URL="http://localhost/osgeolive/en/quickstart/52nWPS_quickstart.html"
@@ -96,12 +96,13 @@ fi
 #
 #
 # 3 tomcat
-if [ -f "/etc/init.d/$WPS_TOMCAT_SCRIPT_NAME" ] ; then
-   	echo "[$(date +%M:%S)]: $WPS_TOMCAT_SCRIPT_NAME service script found in /etc/init.d/."
-else
-	echo "[$(date +%M:%S)]: $WPS_TOMCAT_SCRIPT_NAME not found. Installing it..."
-	apt-get install --assume-yes "$WPS_TOMCAT_SCRIPT_NAME" "${WPS_TOMCAT_SCRIPT_NAME}-admin"
-fi
+# NOTE: Ubuntu 20.04 now uses systemd, disabling this part as tomcat is already installed.
+# if [ -f "/etc/init.d/$WPS_TOMCAT_SCRIPT_NAME" ] ; then
+#    	echo "[$(date +%M:%S)]: $WPS_TOMCAT_SCRIPT_NAME service script found in /etc/init.d/."
+# else
+# 	echo "[$(date +%M:%S)]: $WPS_TOMCAT_SCRIPT_NAME not found. Installing it..."
+# 	apt-get install --assume-yes "$WPS_TOMCAT_SCRIPT_NAME" "${WPS_TOMCAT_SCRIPT_NAME}-admin"
+# fi
 #
 #
 #
@@ -176,9 +177,9 @@ chgrp users "$WPS_BIN_FOLDER"
 if [ ! -e $WPS_BIN_FOLDER/52nWPS-start.sh ] ; then
    cat << EOF > $WPS_BIN_FOLDER/52nWPS-start.sh
 #!/bin/bash
-STAT=\`sudo service "$WPS_TOMCAT_SCRIPT_NAME" status | grep pid\`
+STAT=\`sudo service $WPS_TOMCAT_SCRIPT_NAME status | grep PID\`
 if [ "\$STAT" = "" ]; then
-    sudo service "$WPS_TOMCAT_SCRIPT_NAME" start
+    sudo service $WPS_TOMCAT_SCRIPT_NAME start
     (sleep 2; echo "25"; sleep 2; echo "50"; sleep 2; echo "75"; sleep 2; echo "100") | zenity --progress --auto-close --text "52North WPS starting"
 fi
 firefox $WPS_URL $WPS_QUICKSTART_URL $WPS_OVERVIEW_URL
@@ -188,9 +189,9 @@ fi
 if [ ! -e $WPS_BIN_FOLDER/52nWPS-stop.sh ] ; then
    cat << EOF > $WPS_BIN_FOLDER/52nWPS-stop.sh
 #!/bin/bash
-STAT=\`sudo service "$WPS_TOMCAT_SCRIPT_NAME" status | grep pid\`
+STAT=\`sudo service $WPS_TOMCAT_SCRIPT_NAME status | grep PID\`
 if [ "\$STAT" != "" ]; then
-    sudo service "$WPS_TOMCAT_SCRIPT_NAME" stop
+    sudo service $WPS_TOMCAT_SCRIPT_NAME stop
     zenity --info --text "52North WPS stopped"
 fi
 EOF
@@ -244,9 +245,9 @@ fi
 cp -v /usr/local/share/applications/52nWPS-stop.desktop "$USER_HOME/Desktop/"
 chown -v $USER_NAME:$USER_NAME "$USER_HOME/Desktop/52nWPS-stop.desktop"
 
-##-- 12dev  link .tif to common data dir
-chmod a+r /var/lib/tomcat8/webapps/52nWPS/testData/elev_srtm_30m21.tif
-ln -s /var/lib/tomcat8/webapps/52nWPS/testData/elev_srtm_30m21.tif \
+## link .tif to common data dir
+chmod a+r "/var/lib/$WPS_TOMCAT_SCRIPT_NAME/webapps/52nWPS/testData/elev_srtm_30m21.tif"
+ln -s "/var/lib/$WPS_TOMCAT_SCRIPT_NAME/webapps/52nWPS/testData/elev_srtm_30m21.tif" \
        /usr/local/share/data/raster/elev_srtm_30m21.tif
 
 #

@@ -6,7 +6,7 @@
 # Version 2018-06-14
 #
 #############################################################################
-# Copyright (c) 2011-2018 The Open Source Geospatial Foundation and others.
+# Copyright (c) 2011-2020 The Open Source Geospatial Foundation and others.
 # Licensed under the GNU LGPL.
 #
 # This library is free software; you can redistribute it and/or modify it
@@ -37,8 +37,8 @@ if [ -z "$USER_NAME" ] ; then
    USER_NAME="user"
 fi
 USER_HOME="/home/$USER_NAME"
-TOMCAT_USER_NAME="tomcat8"
-TOMCAT_SCRIPT_NAME="$TOMCAT_USER_NAME"
+TOMCAT_USER_NAME="tomcat"
+TOMCAT_SCRIPT_NAME="tomcat9"
 SOS_WEB_APP_NAME="52nSOS"
 SOS_ICON_NAME="52nSOS.png"
 SOS_URL="http://localhost:8080/$SOS_WEB_APP_NAME"
@@ -105,13 +105,13 @@ fi
 #
 #
 # 3 tomcat
-#
-if [ -f "/etc/init.d/$TOMCAT_SCRIPT_NAME" ] ; then
-   	echo "[$(date +%M:%S)]: $TOMCAT_SCRIPT_NAME service script found in /etc/init.d/."
-else
-    echo "[$(date +%M:%S)]: $TOMCAT_SCRIPT_NAME not found. Installing it..."
-    apt-get install --assume-yes "$TOMCAT_SCRIPT_NAME" "${TOMCAT_SCRIPT_NAME}-admin"
-fi
+# NOTE: Ubuntu 20.04 now uses systemd, disabling this part as tomcat is already installed.
+# if [ -f "/etc/init.d/$TOMCAT_SCRIPT_NAME" ] ; then
+#    	echo "[$(date +%M:%S)]: $TOMCAT_SCRIPT_NAME service script found in /etc/init.d/."
+# else
+#     echo "[$(date +%M:%S)]: $TOMCAT_SCRIPT_NAME not found. Installing it..."
+#     apt-get install --assume-yes "$TOMCAT_SCRIPT_NAME" "${TOMCAT_SCRIPT_NAME}-admin"
+# fi
 #
 #
 # 4 postgresql
@@ -163,6 +163,7 @@ fi
 # 2 Database set-up
 #
 # we need to stop tomcat around this process
+# NOTE: systemctl start/stop/status does not work in chroot, tomcat needs to be started mannually if needed.
 TOMCAT=`systemctl status $TOMCAT_SCRIPT_NAME | grep "Active: active" | wc -l`
 if [ $TOMCAT -eq 1 ]; then
     systemctl stop $TOMCAT_SCRIPT_NAME
@@ -188,7 +189,7 @@ if [ $SOS_DB_EXISTS -gt 0 ] ; then
 fi
 #
 echo "[$(date +%M:%S)]: Create SOS db"
-su $PG_USER -c "PGOPTIONS='$PG_OPTIONS' createdb --owner=$USER_NAME $PG_DB_NAME"
+su $PG_USER -c "PGOPTIONS='$PG_OPTIONS' createdb --owner=$PG_USER $PG_DB_NAME"
 su $PG_USER -c "PGOPTIONS='$PG_OPTIONS' psql $PG_DB_NAME -c 'create extension postgis;'"
 # su $PG_USER -c "PGOPTIONS='$PG_OPTIONS' psql $PG_DB_NAME -c 'create extension postgis_topology;'"
 echo "[$(date +%M:%S)]: DB $PG_DB_NAME created"
@@ -236,7 +237,7 @@ if [ \$POSTGRES -ne 1 ]; then
 fi
 TOMCAT=\`sudo systemctl status $TOMCAT_SCRIPT_NAME | grep "Active: active" | wc -l\`
 if [ \$TOMCAT -ne 1 ]; then
-    sudo systemctl start $TOMCAT_SCRIPT_NAME
+    sudo service $TOMCAT_SCRIPT_NAME start
 fi
 firefox $SOS_URL $SOS_QUICKSTART_URL $SOS_OVERVIEW_URL
 EOF
@@ -247,7 +248,7 @@ if [ ! -e $SOS_BIN_FOLDER/52nSOS-stop.sh ] ; then
 #!/bin/bash
 TOMCAT=\`sudo systemctl status $TOMCAT_SCRIPT_NAME | grep "Active: active" | wc -l\`
 if [ \$TOMCAT -eq 1 ]; then
-    sudo systemctl stop $TOMCAT_SCRIPT_NAME
+    sudo service $TOMCAT_SCRIPT_NAME stop
 fi
 zenity --info --text "52North SOS stopped"
 EOF

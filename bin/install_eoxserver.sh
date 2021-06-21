@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2012-2018 Open Source Geospatial Foundation (OSGeo) and others.
+# Copyright (c) 2012-2020 Open Source Geospatial Foundation (OSGeo) and others.
 #
 # Licensed under the GNU LGPL version >= 2.1.
 #
@@ -27,7 +27,7 @@ fi
 USER_HOME="/home/$USER_NAME"
 
 # Set EOxServer version to install
-EOXSVER="0.4.0"
+EOXSVER="1.0.0-rc22"
 
 DATA_DIR="/usr/local/share/eoxserver"
 DOC_DIR="$DATA_DIR/doc"
@@ -36,6 +36,8 @@ APACHE_CONF_DIR="/etc/apache2/conf-available/"
 APACHE_CONF=$APACHE_CONF_DIR$APACHE_CONF_FILE
 TMP_DIR="/tmp/build_eoxserver"
 POSTGRES_USER="$USER_NAME"
+ADMIN_USER="admin"
+ADMIN_EMAIL="office@eox.at"
 
 
 ## check required tools are installed
@@ -46,8 +48,8 @@ fi
 
 #Install packages
 apt-get -q update
-apt-get --assume-yes install python-gdal libxml2 python-lxml python-psycopg2 \
-    python-libxml2 cgi-mapserver python-mapscript libapache2-mod-wsgi python-eoxserver 
+apt-get --assume-yes install python3-gdal libxml2 python3-lxml python3-psycopg2 \
+    python3-libxml2 cgi-mapserver python3-mapscript libapache2-mod-wsgi-py3 python3-eoxserver
 
 if [ $? -ne 0 ] ; then
     echo 'ERROR: Package install failed! Aborting.'
@@ -80,6 +82,8 @@ if [ ! -d eoxserver_demonstration ] ; then
     cd eoxserver_demonstration
 
     # Configure database
+    sed -e "s/db_type = os.environ.get('DB')/db_type = 'postgis'/" \
+        -i eoxserver_demonstration/settings.py
     sed -e "s/'ENGINE': .*/'ENGINE': 'django.contrib.gis.db.backends.postgis',/" \
         -i eoxserver_demonstration/settings.py
     sed -e "s/'NAME': .*/'NAME': 'eoxserver_demo',/" \
@@ -101,7 +105,7 @@ if [ ! -d eoxserver_demonstration ] ; then
     echo "ALLOWED_HOSTS = ['*']" >> eoxserver_demonstration/settings.py
 
     # Initialize database
-    python manage.py syncdb --noinput
+    python3 manage.py migrate --noinput
 
     # Download and register demonstration data
     wget -c --progress=dot:mega \
@@ -112,9 +116,11 @@ if [ ! -d eoxserver_demonstration ] ; then
     chown -R root.root eoxserver-release-*
 
     mkdir -p eoxserver_demonstration/data/fixtures/
-    mv eoxserver-release-$EOXSVER/autotest/autotest/data/fixtures/auth_data.json \
-        eoxserver-release-$EOXSVER/autotest/autotest/data/fixtures/range_types.json \
+    mv eoxserver-release-$EOXSVER/autotest/autotest/data/fixtures/range_types.json \
         eoxserver_demonstration/data/fixtures/
+
+    mv eoxserver-release-$EOXSVER/autotest/autotest/data/rgb_definition.json \
+        eoxserver_demonstration/data/
 
     mkdir -p eoxserver_demonstration/data/meris/
     mv eoxserver-release-$EOXSVER/autotest/autotest/data/meris/README \
@@ -125,18 +131,49 @@ if [ ! -d eoxserver_demonstration ] ; then
     rm release-$EOXSVER.tar.gz
     rm -r eoxserver-release-$EOXSVER/
 
-    python manage.py loaddata eoxserver_demonstration/data/fixtures/auth_data.json eoxserver_demonstration/data/fixtures/range_types.json
-    python manage.py eoxs_collection_create -i MER_FRS_1P_RGB_reduced
+    python3 manage.py coveragetype import eoxserver_demonstration/data/rgb_definition.json
 
-    python manage.py eoxs_dataset_register --collection MER_FRS_1P_RGB_reduced -d "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060816_090929_000001972050_00222_23322_0058_RGB_reduced.tif -m "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060816_090929_000001972050_00222_23322_0058_RGB_reduced.xml -r RGB
-    python manage.py eoxs_dataset_register --collection MER_FRS_1P_RGB_reduced -d "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060822_092058_000001972050_00308_23408_0077_RGB_reduced.tif -m "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060822_092058_000001972050_00308_23408_0077_RGB_reduced.xml -r RGB
-    python manage.py eoxs_dataset_register --collection MER_FRS_1P_RGB_reduced -d "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060830_100949_000001972050_00423_23523_0079_RGB_reduced.tif -m "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060830_100949_000001972050_00423_23523_0079_RGB_reduced.xml -r RGB
+    python3 manage.py shell -c "from django.contrib.auth.models import User; User.objects.filter(username='$ADMIN_USER').exists() or User.objects.create_superuser('$ADMIN_USER', '$ADMIN_EMAIL', '$ADMIN_USER')"
+
+    python3 manage.py producttype create MERIS_product_type -c RGB
+    python3 manage.py collectiontype create MERIS_collection_type -p MERIS_product_type
+    python3 manage.py collection create MER_FRS_1P_RGB_reduced -t MERIS_collection_type
+
+    product_A_ID=$(python3 manage.py product register -t MERIS_product_type -r --print-identifier --metadata-file  "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060816_090929_000001972050_00222_23322_0058_RGB_reduced.xml)
+    product_B_ID=$(python3 manage.py product register -t MERIS_product_type -r --print-identifier --metadata-file  "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060822_092058_000001972050_00308_23408_0077_RGB_reduced.xml)
+    product_C_ID=$(python3 manage.py product register -t MERIS_product_type -r --print-identifier --metadata-file  "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060830_100949_000001972050_00423_23523_0079_RGB_reduced.xml)
+
+    python3 manage.py browse register $product_A_ID "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060816_090929_000001972050_00222_23322_0058_RGB_reduced.tif
+    python3 manage.py browse register $product_B_ID "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060822_092058_000001972050_00308_23408_0077_RGB_reduced.tif
+    python3 manage.py browse register $product_C_ID "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060830_100949_000001972050_00423_23523_0079_RGB_reduced.tif
+
+    python3 manage.py coverage register \
+        -t RGB \
+        -d "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060816_090929_000001972050_00222_23322_0058_RGB_reduced.tif \
+        -m "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060816_090929_000001972050_00222_23322_0058_RGB_reduced.xml \
+        --identifier-template '{identifier}_coverage' -p $product_A_ID --print-identifier -r
+
+    python3 manage.py coverage register \
+        -t RGB \
+        -d "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060822_092058_000001972050_00308_23408_0077_RGB_reduced.tif \
+        -m "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060822_092058_000001972050_00308_23408_0077_RGB_reduced.xml \
+        --identifier-template '{identifier}_coverage' -p $product_B_ID --print-identifier -r
+
+    python3 manage.py coverage register \
+        -t RGB \
+        -d "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060830_100949_000001972050_00423_23523_0079_RGB_reduced.tif \
+        -m "$DATA_DIR"/eoxserver_demonstration/eoxserver_demonstration/data/meris/mosaic_MER_FRS_1P_reduced_RGB/mosaic_ENVISAT-MER_FRS_1PNPDE20060830_100949_000001972050_00423_23523_0079_RGB_reduced.xml \
+        --identifier-template '{identifier}_coverage' -p $product_C_ID  --print-identifier -r
+
+    python3 manage.py collection insert MER_FRS_1P_RGB_reduced $product_A_ID
+    python3 manage.py collection insert MER_FRS_1P_RGB_reduced $product_B_ID
+    python3 manage.py collection insert MER_FRS_1P_RGB_reduced $product_C_ID
 
     touch eoxserver_demonstration/logs/eoxserver.log
     chown www-data eoxserver_demonstration/logs/eoxserver.log
 
     # Collect static files
-    python manage.py collectstatic --noinput
+    python3 manage.py collectstatic --noinput
 
     # Configure WSGI
     sed -e "s,^import os$,import os\nimport sys\n\npath = \"$DATA_DIR/eoxserver_demonstration/\"\nif path not in sys.path:\n    sys.path.insert(0, path)\n," \
@@ -209,13 +246,13 @@ cd "$DOC_DIR"
 chmod g+w .
 chgrp users .
 
-wget -c --progress=dot:mega \
-    "https://media.readthedocs.org/pdf/eoxserver/0.4/eoxserver.pdf" \
-    -O EOxServer_documentation-$EOXSVER.pdf
+# wget -c --progress=dot:mega \
+#     "https://media.readthedocs.org/pdf/eoxserver/0.4/eoxserver.pdf" \
+#     -O EOxServer_documentation-$EOXSVER.pdf
 
-ln -sf EOxServer_documentation-$EOXSVER.pdf EOxServer_documentation.pdf
-chmod g+w -R EOxServer_documentation*
-chgrp users -R EOxServer_documentation*
+# ln -sf EOxServer_documentation-$EOXSVER.pdf EOxServer_documentation.pdf
+# chmod g+w -R EOxServer_documentation*
+# chgrp users -R EOxServer_documentation*
 ln -sTf "$DOC_DIR" /var/www/html/eoxserver-docs
 
 # # Add Documentation Launch icon to desktop

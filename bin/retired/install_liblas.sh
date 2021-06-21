@@ -4,7 +4,7 @@
 # Purpose: This script will install libLAS
 #
 #############################################################################
-# Copyright (c) 2013-2018 The Open Source Geospatial Foundation and others.
+# Copyright (c) 2013-2019 The Open Source Geospatial Foundation and others.
 # Author:  Brian Hamlin dbb maplabs@light42.com
 #
 # Licensed under the GNU LGPL version >= 2.1.
@@ -39,7 +39,7 @@ apt-get install --yes liblas-bin python-liblas liblas3
 echo 'Downloading demo data ...'
 mkdir -p /usr/local/share/data/las
 wget -c --progress=dot:mega \
-    "http://aiolos.survey.ntua.gr/gisvm/data/srs.las" \
+    "http://download.osgeo.org/livedvd/data/liblas/srs.las" \
     -O /usr/local/share/data/las/srs.las
 
 ####

@@ -1,6 +1,291 @@
 OSGeo Live GIS Disc
 ===================
 
+Version 14.0
+====================
+
+ * Fixed Tomcat start issue on installed systems (#2332)
+ * Updates to 52nWPS,52nSOS,ncWMS and Re3gistry to use proper sudoers permissions
+
+Version 14.0rc5
+====================
+
+ * Data folder shortcut fixed (#2331)
+ * Release dedicated to Malena Libman
+
+Version 14.0rc4
+====================
+
+ * MapServer mapfiles path updated to fix GeoMoose issue (#2329)
+ * Re3gistry installer fixes
+
+Version 14.0rc3
+====================
+
+ * Cesium 1.80 (#2323)
+ * Fixed doc broken links (#2320)
+ * Re3gistry installer fixes
+ * Updated ncWMS installer to work with tomcat9
+ * Folium package added
+ * MapServer mapfiles upstream security patch
+
+Version 14.0rc2
+====================
+
+ * Disabled fsck during live boot
+ * Fixed actinia launcher (#2266)
+ * Fixed permision issue for rasdaman log folder (#2279)
+ * Added new boot splash image
+
+Version 14.0rc1
+====================
+
+ * QGIS 3.16.4
+ * QGIS Server 3.16.4
+ * t-rex 0.13.0
+ * Added pgadmin4 configuration (#2304)
+ * Added tested Notebooks for 14.0.
+ * OSGeoLive documentation and translations finalized for 14.0
+
+Version 14.0beta3
+====================
+
+ * QGIS 3.16.3
+ * QGIS Server 3.16.3
+
+Version 14.0beta2
+====================
+
+ * PostGIS 3.1.1
+ * GeoStyler 4.5.0
+ * ZOO-Project 1.8.0
+ * EOxServer 1.0.0rc22
+ * ncWMS 2.4.2 (VM only)
+ * Fixed desktop untrusted launchers (#2306)
+ * Added pgadmin4 in database desktop folder
+ * Disabled Virtual Box guest additions due to upstream bug (#2309)
+
+Version 14.0beta1
+====================
+
+ * QGIS 3.10.14
+ * GeoServer 2.18.1
+ * OpenLayers 6.5.0
+ * GMT moved to VM only
+ * EOxServer 1.0.0-rc21
+ * Switching to pgadmin4 as default (#2262)
+ * New artwork for 14.0
+
+Version 14.0alpha5
+====================
+
+ * Proj 7.2.1
+ * GDAL 3.2.1
+ * QGIS 3.10.13
+ * GRASS 7.8.5
+ * pycsw 2.6.0
+ * actinia 0.99.15
+ * Rasdaman 10.0
+ * Mapnik demo updated (#2255)
+ * Draft VM only installer added
+ * Fixed EOxServer configuration (#2267)
+ * Fixed GeoNode configuration (#2268)
+
+Version 14.0alpha4
+====================
+
+ * GEOS 3.9.0
+ * Proj 7.2.0
+ * GDAL 3.2.0
+ * PostGIS 3.1.0
+ * QGIS 3.10.12
+ * MapServer 7.6.2
+ * fiona 1.8.18
+ * rasterio 1.1.8
+ * OSM data for Buenos Aires
+
+Version 14.0alpha3
+====================
+
+ * GeoNode 3.1.0
+ * Mapbender 3.2.3
+ * pygeoapi 0.9.0
+ * MapProxy 1.13.0
+ * EOxServer 1.0.0-rc17
+ * istSOS 2.4.0-rc1
+ * Fixed VirtualBox installation failures (#2263)
+ * Fixed tomcat 9 startup issue (#2259)
+ * Fixed 52nWPS installer (#2264)
+ * Fixed 52nSOS installer (#2265)
+ * QGIS Web Client 2 fixed (#2277)
+ * Fixed uDig installer (#2281)
+ * Completed LXQt desktop customization (#1777, #2246)
+ * Fixed pgrouting installer (#2276)
+ * Marble desktop icon missing (#2274)
+
+Version 14.0alpha2
+====================
+
+ * GeoStyler installer added
+ * Re3gistry installer added
+ * QGIS Web Client 2
+ * Mapbender 3.2.2
+
+Version 14.0alpha1
+====================
+
+ * Lubuntu 20.04.1
+ * Fixed initrd multi-part format for 20.04.1 (#2249)
+ * GDAL 3.1.3
+ * PROJ 7.1.1
+ * GEOS 3.8.1
+ * Spatialite 5.0.0
+ * PostGIS 3.0.2
+ * QGIS 3.10.10
+ * GRASS 7.8.3
+ * GeoServer 2.18.0
+ * MapServer 7.6.1
+ * Mapbender 3.2.1
+ * OTB 7.1.0
+ * pycsw 2.4.2
+ * PyWPS 4.2.7
+ * uDig 2.2.0RC1
+ * gvSIG 2.4.0
+ * pygeoapi 0.8.0
+ * Mapnik 3.0.23
+ * OSSIM 2.9.1
+ * fiona 1.8.17
+ * rasterio 1.1.7
+ * GMT 6.1.1
+ * libgeotiff 1.6.0
+ * osgearth 2.10.2
+ * PDAL 2.2.0
+ * pgRouting 3.1.0
+ * MapCache 1.10.0
+ * mappyfile 0.8.4
+ * geopandas 0.8.1
+ * Tomcat 9
+ * PostgreSQL 12
+ * Python 3 as default
+ * Jupyter 4.6.3
+ * Jupyter Notebook 6.0.3
+ * Switched to xyGrib instead of zyGrib
+ * Default R packages from Focal
+ * Updated desktop configuration for LXQt and SDDM (#1777)
+ * Default desktop image for 14.0
+
+Version 13.0
+====================
+
+ * Fixed CJK fonts issue (#2175)
+
+Version 13.0rc2
+====================
+
+ * Lubuntu 18.04.3
+ * VirtualBox 6.x issue fix (#2174)
+ * Documentation updates and new languages from Transifex.
+
+Version 13.0rc1
+====================
+
+ * Actinia 0.2.1 (new project)
+ * QGIS 3.4.10
+ * New artwork based on Bucharest map
+ * EOxServer 1.0-beta2
+ * Enhanced support for Python 3 libraries including new Jupyter notebooks.
+ * Disk space cleanup (#467)
+ * Added QGIS3 plugins
+ * Fixed pycsw tester app
+ * Fixed QGIS quickstart not finding GRASS data (#2085)
+ * Fixed ZOO WPS demo (#2144)
+
+Version 13.0beta3
+====================
+
+ * EOxServer 1.0-beta1
+ * rasdaman 9.8.1
+ * ZOO-Project 1.7.0
+ * MapCache 1.8.0
+ * Revert to Mapbender 3.0.8.1
+ * Remove zygrib high resolution maps (#467)
+
+Version 13.0beta2
+====================
+
+ * GDAL 2.4.2
+ * GEOS 3.7.1
+ * QGIS 3.4.9
+ * MapServer 7.4.1
+ * SAGA 7.3.0
+ * GeoNode 2.10.0
+ * libosmium 2.15.1
+ * OGDI 4.1.0
+ * osgearth 2.10.2
+ * OSSIM 2.7.2
+ * OWSLib 0.18.0
+ * geopandas 0.5.1
+ * rasterio 1.0.24
+ * Added QGIS 3 configuration (#2141)
+
+Version 13.0beta1
+====================
+
+ * MapServer 7.4.0
+ * GeoServer 2.15.1
+ * QGIS 3.4.8
+ * OpenLayers 5.3.0
+ * pycsw 2.4.0
+ * PostGIS 2.5.2
+ * GeoNode 2.10rc5
+ * Mapbender 3.0.8.3
+ * GeoMoose 3.3.1
+ * rasterio 1.0.24
+ * Cesium 1.58
+ * OSM data for Bucharest
+ * Django 1.11
+ * PostgreSQL ogr-fdw 1.0.5
+
+Version 13.0alpha2
+====================
+
+ * PostGIS 2.5.1
+ * GeoExt 3.1 (new project)
+ * GeoMoose 3.3.0
+ * 52nWPS 3.6.3
+ * Mapbender 3.0.8.1
+ * Fiona 1.8.6
+ * rasterio 1.0.22
+ * OWSLib 0.17.1
+ * mappyfile 0.8.2
+ * pandas 0.23.3
+ * geopandas 0.5.0
+ * cartopy 0.17.0
+
+Version 13.0alpha1
+====================
+
+ * Lubuntu 18.04.2
+ * QGIS 3.4.6 (no plugins yet)
+ * GDAL 2.4.0
+ * PostGIS 2.5.1
+ * GRASS 7.6.1
+ * PROJ 5.2.0
+ * MapServer 7.2.2
+ * GEOS 3.7.0
+ * OTB 6.6.1
+ * Mapnik 3.0.22
+ * OSSIM 2.5.2
+ * fiona 1.8.4
+ * GMT 5.4.5
+ * gpsprune 19.2
+ * libgeotiff 1.4.2
+ * osgearth 2.10.0
+ * PDAL 1.8.0
+ * pgRouting 2.6.2
+ * Adapted initrd modification to multi-part format used by debian and ubuntu since 18.04.1 (#2100)
+ * Default desktop image for 13.0
+
 Version 12.0
 ====================
 

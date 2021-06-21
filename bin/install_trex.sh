@@ -6,7 +6,7 @@
 #
 #############################################################################
 # Author: Brian M Hamlin <darkblue_b> / Pirmin Kalberer <pka@sourcepole.com>
-# Copyright (c) 2018 The Open Source Geospatial Foundation and others.
+# Copyright (c) 2018-2020 The Open Source Geospatial Foundation and others.
 # Licensed under the GNU LGPL version >= 2.1.
 #
 # This library is free software; you can redistribute it and/or modify it
@@ -26,9 +26,6 @@
 
 BASE_DIR=`pwd`
 BUILD_DIR='/tmp/build_t-rex'
-#WEB_DIR=t-rex
-#UNZIP_DIR="$BUILD_DIR/$WEB_DIR"
-T_REX_VERSION="0.9.0"
 ####
 
 if [ -z "$USER_NAME" ] ; then
@@ -40,12 +37,11 @@ echo "\nCreating temporary directory $BUILD_DIR..."
 mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 echo "\nDownloading t-rex package..."
-wget -c --tries=3 --progress=dot:mega \
-   "http://download.osgeo.org/livedvd/12/t_rex/t-rex-v${T_REX_VERSION}-x86_64-unknown-linux-gnu.deb"
+wget -c --tries=3 --progress=dot:mega -O t-rex-x86_64-linux-gnu.tar.gz \
+   "https://github.com/t-rex-tileserver/t-rex/releases/download/v0.13.0/t-rex-v0.13.0-x86_64-linux-gnu.tar.gz"
 
 echo "\nInstalling t-rex..."
-dpkg -i t-rex-v${T_REX_VERSION}-x86_64-unknown-linux-gnu.deb
-
+tar xf t-rex-x86_64-linux-gnu.tar.gz -C /usr/bin
 
 echo "\nGenerating launcher..."
 wget -O /usr/share/pixmaps/t-rex.png 'https://avatars2.githubusercontent.com/u/31633660?s=200&v=4'
@@ -60,7 +56,7 @@ Encoding=UTF-8
 Name=T-Rex
 Comment=Vector Tile Server
 Categories=Application;Internet;
-Exec=t_rex serve --dbconn "postgresql://user@%%2Frun%%2Fpostgresql/osm_local" --simplify false
+Exec=t_rex serve --dbconn postgresql://user:user@localhost/osm_local --simplify false
 Icon=t-rex
 Terminal=true
 StartupNotify=false

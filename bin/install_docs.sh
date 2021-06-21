@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2009-2018 The Open Source Geospatial Foundation and others.
+# Copyright (c) 2009-2021 The Open Source Geospatial Foundation and others.
 # Copyright (c) 2009 LISAsoft
 # Copyright (c) 2009 Cameron Shorter
 # Licensed under the GNU LGPL version >= 2.1.
@@ -44,7 +44,7 @@ if [ "$BUILD_MODE" = "nightly" ] ; then
    apt-get update
 fi
 
-apt-get install --assume-yes osgeolive-docs javascript-common
+apt-get install --assume-yes osgeolive-docs javascript-common fonts-noto-cjk
 
 ln -s /usr/share/doc/osgeolive-docs/html $DEST/osgeolive
 
@@ -58,9 +58,6 @@ if [ -d /usr/local/mbsystem ] ; then
 fi
 
 ln -s /usr/local/share/qgis .
-ln -s /usr/local/share/qgis_mapserver/mapviewer.html \
-      /usr/local/share/qgis_mapserver/index.html
-ln -s /usr/local/share/qgis_mapserver qgis_server
 #ln -s /usr/share/doc/geopublishing-doc geopublishing
 # ln -s /usr/local/share/saga .
 
@@ -229,7 +226,7 @@ Encoding=UTF-8
 Name=Sample data
 Comment=Sample Geo Data
 Categories=Application;Education;Geography;
-Exec=pcmanfm /usr/local/share/data
+Exec=pcmanfm-qt /usr/local/share/data
 Icon=/usr/share/icons/gnome/256x256/apps/system-file-manager.png
 Terminal=false
 StartupNotify=false

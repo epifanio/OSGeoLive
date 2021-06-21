@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2009-2018 The Open Source Geospatial Foundation and others.
+# Copyright (c) 2009-2020 The Open Source Geospatial Foundation and others.
 # Licensed under the GNU LGPL version >= 2.1.
 #
 # This library is free software; you can redistribute it and/or modify it
@@ -59,9 +59,9 @@ cat << EOF > /usr/share/applications/mapproxy-start.desktop
 Type=Application
 Encoding=UTF-8
 Name=Start MapProxy
-Comment=MapProxy for LiveDVD WMS services
+Comment=MapProxy for OSGeoLive WMS services
 Categories=Application;Geography;Geoscience;Education;
-Exec=lxterminal -e mapproxy_start.sh
+Exec=qterminal -e mapproxy_start.sh
 Icon=mapproxy
 Terminal=false
 StartupNotify=false
@@ -121,11 +121,8 @@ services:
       fees: 'None'
 
 layers:
-  - name: tilestache
-    title: World population (Mapnik + Tilestache TMS)
-    sources: [tilestache_cache]
   - name: mapnik
-    title: World population (Mapnik, uncached)
+    title: World population (Mapnik)
     sources: [mapnik]
   - name: mapserver
     title: Mapserver (Itasca)
@@ -138,7 +135,7 @@ layers:
     sources: [mapnik, geoserver]
 
 caches:
-  tilestache_cache:
+  mapnik_cache:
     grids: [GLOBAL_MERCATOR]
     sources: [tilestache]
 
@@ -155,16 +152,14 @@ sources:
       bbox: -124.73142200000001,24.955967,-66.969849,49.371735
       bbox_srs: 'EPSG:4326'
 
-  tilestache:
-    type: tile
-    url: http://127.0.0.1:8012/example/%(z)d/%(x)d/%(y)d.png
-    grid: global_mercator_inverse
-    transparent: true
 
   mapnik:
     type: mapnik
-    use_mapnik2: true
-    mapfile: /usr/local/share/mapnik/demo/population.xml
+    mapfile: /usr/local/share/mapnik/world_population.xml
+    transparent: true
+    coverage:
+      bbox: -180,-90,180,90
+      bbox_srs: 'epsg:4326'    
 
   mapserver:
     type: wms
@@ -172,7 +167,7 @@ sources:
     req:
       url: http://localhost/cgi-bin/mapserv?
       layers: airports,cities,lakespy2,dlgstln2,roads,twprgpy3
-      map: /usr/local/www/docs_maps/mapserver_demos/workshop/itasca.map
+      map: /usr/local/www/docs_maps/mapserver_demos/itasca/itasca.map
     coverage:
       bbox: 363016.590190,5148502.940313,588593.999470,5374080.349593
       bbox_srs: 'epsg:26915'

@@ -8,7 +8,7 @@
 # Source:  http://www.naturalearthdata.com
 #
 #################################################
-# Copyright (c) 2010-2018 Open Source Geospatial Foundation (OSGeo) and others.
+# Copyright (c) 2010-2021 Open Source Geospatial Foundation (OSGeo) and others.
 # Copyright (c) 2009 LISAsoft
 #
 # Licensed under the GNU LGPL version >= 2.1.
@@ -193,12 +193,12 @@ SRC_DIR="$NE2_DATA_FOLDER"
 sudo -u $POSTGRES_USER createdb natural_earth2
 sudo -u $POSTGRES_USER psql natural_earth2 -c 'create extension postgis;'
 # 1/2013 Needed for Kosmo and gvSIG:
-sudo -u $POSTGRES_USER psql natural_earth2 \
-  -f /usr/share/postgresql/10/contrib/postgis-2.4/legacy.sql
+#sudo -u $POSTGRES_USER psql natural_earth2 \
+#  -f /usr/share/postgresql/10/contrib/postgis-2.4/legacy.sql
 
 for n in "$SRC_DIR"/*.shp;
 do
-  shp2pgsql -W LATIN1 -s 4326 -I -g the_geom "$n" | \
+  shp2pgsql -W LATIN1 -s 4326 -I -g geom "$n" | \
      sudo -u $POSTGRES_USER psql --quiet natural_earth2
 done
 

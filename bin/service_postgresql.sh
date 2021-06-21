@@ -4,7 +4,7 @@
 # Purpose: This script will install postgreSQL pgadmin3
 #
 #############################################################################
-# Copyright (c) 2009-2016 The Open Source Geospatial Foundation and others.
+# Copyright (c) 2009-2021 The Open Source Geospatial Foundation and others.
 # Licensed under the GNU LGPL version >= 2.1.
 #
 # This library is free software; you can redistribute it and/or modify it
@@ -27,7 +27,7 @@ if [ -z "$USER_NAME" ] ; then
 fi
 USER_HOME="/home/$USER_NAME"
 
-PG_VERSION="10"
+PG_VERSION="12"
 
 #debug:
 echo "#DEBUG The locale settings are currently:"
@@ -52,7 +52,7 @@ echo "#DEBUG The locale settings updated:"
 locale
 echo "------------------------------------"
 
-apt-get install --yes postgresql-"$PG_VERSION" pgadmin3
+apt-get install --yes postgresql-"$PG_VERSION" pgadmin4
 
 if [ $? -ne 0 ] ; then
    echo 'ERROR: Package install failed! Aborting.'
@@ -79,6 +79,9 @@ for FILE in  pgadmin3  pgpass  ; do
     chown $USER_NAME:$USER_NAME "$USER_HOME/.$FILE"
     chmod 600 "$USER_HOME/.$FILE"
 done
+
+mkdir -p "$USER_HOME/.pgadmin"
+cp ../app-conf/postgresql/pgadmin4.db "$USER_HOME/.pgadmin/pgadmin4.db"
 
 ####
 "$BUILD_DIR"/diskspace_probe.sh "`basename $0`" end
